@@ -1,13 +1,9 @@
 {
   "manifest_version": 3,
   "name": "BOJ Chat Service",
-  "version": "1.0",
+  "version": "1.1",
   "description": "BOJ Real-time chat application using WebSocket.",
   "permissions": ["storage"],
-  "background": {
-    "service_worker": "js/chat.js"
-  },
-  
   "content_scripts": [
     {
       "matches": ["https://www.acmicpc.net/*"],

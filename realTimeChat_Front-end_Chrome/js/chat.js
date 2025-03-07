@@ -421,7 +421,7 @@ class ChatApp {
                 throw new Error("BOJ 로그인 이후 사용해주세요.");            
             }
 
-            this.userTier = await this.getUserTierFromDOM();
+            this.userTier = await this.getUserTierFromDOM(bojName);
             const data = await response.json();
 
             // response가 오지 않는 경우, 성공적으로 토큰 유효성 검사 완료
@@ -487,6 +487,8 @@ class ChatApp {
     getUsernameFromDOM() {
         const usernameElement = document.querySelector('.username'); // 사용자 이름이 있는 a 태그를 선택
 
+        
+
         if (usernameElement) {
             const href = usernameElement.getAttribute('href'); // href 속성 가져오기
             const userName = href.split('/user/')[1]; // '/user/' 이후의 부분 추출
@@ -496,27 +498,25 @@ class ChatApp {
     }
 
     
-    async getUserTierFromDOM() {
-        return new Promise((resolve, reject) => {
-            let attemptCount = 0;  // 시도 횟수 초기화
-            const checkInterval = setInterval(() => {
-                const usernameElement = document.querySelector('.username');
-                if (usernameElement) {
-                    const userTierElement = usernameElement.querySelector('.solvedac-tier');
-                    if (userTierElement) {
-                        clearInterval(checkInterval);  // 이미지가 있으면 반복 중지
-                        resolve(userTierElement.getAttribute('src'));  // 이미지 URL 반환
-                    }
-                }
+    async getUserTierFromDOM(bojName) {
+        try {
+            const response = await fetch(`https://api-py.vercel.app/?r=https://solved.ac/api/v3/user/show?handle=${bojName}`);
+            
+            // 만약 404 또는 다른 에러 상태일 경우 기본 이미지를 반환
+            if (!response.ok) {
+                console.error(`Error: ${response.status}`);
+                return `https://d2gd6pc034wcta.cloudfront.net/tier/0.svg`;
+            }
     
-                attemptCount++;  // 시도 횟수 증가
-                if (attemptCount >= 20) {
-                    clearInterval(checkInterval);  // 5번 이상 시도 후 반복 중지
-                    reject(new Error('BOJ 로그인 이후 사용해주세요.'));  // 에러 발생
-                }
-            }, 100);  // 100ms마다 DOM 확인
-        });
+            const data = await response.json();
+            return `https://d2gd6pc034wcta.cloudfront.net/tier/${data.tier}.svg`;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            // 예외가 발생하면 기본 이미지를 반환
+            return `https://d2gd6pc034wcta.cloudfront.net/tier/0.svg`;
+        }
     }
+    
 }
 
 $(document).ready(() => {
