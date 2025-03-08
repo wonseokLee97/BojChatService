@@ -6,6 +6,10 @@
 
 <br/><br/>
 
+- 크롬 스토어: https://chromewebstore.google.com/detail/boj-chat-service/foghgmiphkjcablmjnccpaljbiplkfbe?authuser=0&hl=ko
+
+<br><br>
+
 ## 🤔 프로젝트 소개 
 “알고리즘 문제를 풀고 있는 사람들과 실시간으로 소통하면 어떨까?” 
 
