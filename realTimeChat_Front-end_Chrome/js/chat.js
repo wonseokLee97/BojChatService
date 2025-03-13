@@ -5,7 +5,7 @@ class WebSocketManager {
         this.problemId = problemId;
         this.userTier = userTier;
         this.subscriptionId = 'entry-' + problemId;
-        this.localhost = 'https://bojchat.store';
+        this.domain = 'https://bojchat.store';
         this.stompClient = null;
         this.userName = null;
         this.nameTag = null;
@@ -20,7 +20,7 @@ class WebSocketManager {
     // WebSocket 연결 함수
     async connect() {
 
-        const socket = new SockJS(this.localhost + '/connect');  // SockJS를 사용하여 WebSocket 연결
+        const socket = new SockJS(this.domain + '/connect');  // SockJS를 사용하여 WebSocket 연결
         this.stompClient = Stomp.over(socket);  // Stomp 클라이언트 설정
 
         // JWT 토큰 디코딩 후 사용자 정보 추출
@@ -40,7 +40,6 @@ class WebSocketManager {
             'X-Client-IP': ipFromToken,  // IP 정보 설정
             'bojName': this.userName
         };
-
 
         // WebSocket 서버에 연결
         this.stompClient.connect(headers, this.onConnect.bind(this), this.onError.bind(this));
@@ -79,6 +78,14 @@ class WebSocketManager {
         this.stompClient.subscribe('/sub/channel/' + this.problemId, (chatMessage) => {
             const message = JSON.parse(chatMessage.body);
             this.showChat(message);  // 새 채팅 메시지 표시
+        });
+
+
+        // 변경 메시지 구독
+        this.stompClient.subscribe('/sub/channel/modify' + this.problemId, (chatMessage) => {
+            const message = JSON.parse(chatMessage.body);
+            console.log("변경 왔다!");
+            this.modifyTextBox(message);  // 변경 메시지 표시
         });
     }
 
@@ -156,11 +163,12 @@ class WebSocketManager {
 
             const chatHtml = this.createChatHtml(
                 // chatMessage.userName + " " + chatMessage.nameTag,
+                chatMessage.id,
                 chatMessage.userName,
                 chatMessage.userTier,
                 chatMessage.message,
                 chatMessage.createdAt,
-                chatMessage.ipAddress
+                chatMessage.del
             );
             chatContainer.prepend(chatHtml);  // 위쪽에 추가 (스크롤 위치를 위로 올리기 위해)
         }
@@ -229,12 +237,77 @@ class WebSocketManager {
         return `${year}년 ${month}월 ${day}일 | ${period} ${hours}:${minutes}`;
     }
 
+    async modifyChat(id, newMessage) {
+        try {
+
+            const request = {
+                "id": id,
+                "message": newMessage
+            };
+
+
+            const response = await fetch(
+                this.domain + `/message/modify`, 
+            {
+                method: "PUT",
+                headers: { 
+                    Authorization: 'Bearer ' + this.token,
+                    'token': this.token,
+                    'bojName': this.getUsernameFromDOM(),
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify(request) 
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const chatList = await response.json();
+            return chatList.response;  // 서버에서 받은 채팅 목록 반환
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async deleteChat(id) {
+        try {
+            const request = {
+                "id": id,
+                "message": null
+            };
+
+            const response = await fetch(
+                this.domain + `/message/delete`, 
+            {
+                method: "PUT",
+                headers: { 
+                    Authorization: 'Bearer ' + this.token,
+                    'token': this.token,
+                    'bojName': this.getUsernameFromDOM(),
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify(request) 
+            });
+
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const chatList = await response.json();
+            return chatList.response;  // 서버에서 받은 채팅 목록 반환
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 
     // limit 기준으로 페이지네이션
     async getChatListByLimit(limit) {
         try {
             const response = await fetch(
-                this.localhost + `/message?problemId=${this.problemId}&limit=${limit}`, 
+                this.domain + `/message?problemId=${this.problemId}&limit=${limit}`, 
             {
                 method: "GET",
                 headers: { 
@@ -259,7 +332,7 @@ class WebSocketManager {
     async getChatListByLastMessageId(lastMessageId, limit) {
         try {
             const response = await fetch(
-                this.localhost + `/message/lastMessageId?problemId=${this.problemId}&limit=${limit}&lastMessageId=${lastMessageId}`, 
+                this.domain + `/message/lastMessageId?problemId=${this.problemId}&limit=${limit}&lastMessageId=${lastMessageId}`, 
             {
                 method: "GET",
                 headers: { 
@@ -279,16 +352,51 @@ class WebSocketManager {
         }
     }
 
+    modifyTextBox(chatMessage) {
+        // 전체 메시지 목록에서 해당 ID의 메시지를 찾기
+        const chatMessages = document.querySelectorAll('.chat'); // 예시로 모든 채팅 메시지 요소를 가져옴
+        let targetMessage = null;
+        
+        // 메시지 목록에서 ID가 일치하는 메시지 찾기
+        chatMessages.forEach(chat => {
+            const messageId = chat.getAttribute('id');  
+            if (messageId === String(chatMessage.id)) {
+                targetMessage = chat;  
+            }
+        });
+
+        // 만약 해당 메시지가 있으면
+        if (targetMessage) {
+            const textbox = targetMessage.querySelector('.textbox');  // .textbox 요소 선택
+
+            if (chatMessage.del === 1) {
+                // 삭제된 메시지로 표시
+                textbox.innerText = "삭제된 메시지입니다.";  // 메시지 텍스트 변경
+                textbox.classList.add("deleted-message");  // 'deleted-message' CSS 클래스 추가
+
+                // editDeleteButtons가 포함된 요소 삭제
+                let textButtons = targetMessage.querySelector('.textbuttons');
+                if (textButtons) {
+                    textButtons.remove(); // 요소 제거
+                }
+            } else {
+                // 메시지 수정된 내용으로 변경
+                textbox.innerText = chatMessage.message;  // 수정된 메시지 내용으로 변경
+            }
+        }
+    }
+
 
     // 새 채팅 메시지 화면에 표시하는 함수
     showChat(chatMessage) {
         const chatHtml = this.createChatHtml(
             // chatMessage.userName + " " + chatMessage.nameTag, 
+            chatMessage.id,
             chatMessage.userName,
             chatMessage.userTier,
-            chatMessage.message, 
-            chatMessage.createdAt, 
-            chatMessage.ipAddress
+            chatMessage.message,
+            chatMessage.createdAt,
+            0
         );
 
         $("#chatting").append(chatHtml);  // 새 메시지 추가
@@ -314,7 +422,7 @@ class WebSocketManager {
     // 알림 표시 함수
     alertChat(chatMessage) {
         // 알림 박스 업데이트
-            $("#new-message-alert").html(`${chatMessage.userName + " " + chatMessage.nameTag}: ${chatMessage.message}`);
+            $("#new-message-alert").html(`${chatMessage.userName}: ${chatMessage.message}`);
             $("#new-message-alert").fadeIn(200);
         // }
     }
@@ -346,28 +454,121 @@ class WebSocketManager {
 
 
     // 채팅 메시지의 HTML 요소 생성 함수
-    createChatHtml(sender, tier, message, createdAt, ip) {
+    createChatHtml(id, sender, tier, message, createdAt, del) {
         const formattedTime = this.formatDateTime(createdAt);  // 시간 형식 변환
         const tierImage = `<img src="${tier}" alt="Tier" class="tier-image">`;
+        const isMine = (sender === this.userName) ? 1 : 0;
 
-        if (sender === this.userName) {
-            return `<div class="chat ch2">
-                        <div class="message-info">
-                            <div class="sender">${tierImage}${sender}</div>
-                            <div class="textbox">${message}</div>
-                            <div class="extra-info">${formattedTime}</div>
-                        </div>
-                    </div>`;
-        } else {
-            return `<div class="chat ch1">
-                        <div class="message-info">
-                            <div class="sender">${tierImage}${sender}</div>
-                            <div class="textbox">${message}</div>
-                            <div class="extra-info">${formattedTime}</div>
-                        </div>
-                    </div>`;
+        const editDeleteButtons = isMine ? `
+        <div class="chat-buttons" style="display: none;">
+            <button class="edit-btn" style="
+                background: none;
+                font-weight: bold;  
+                border: none;
+                outline: none;
+                padding: 0;
+                font: inherit;
+                cursor: pointer;
+                font-size: 75%;  /* 폰트 크기 줄이기 */
+            ">수정</button>
+            <tex> </tex>
+            <button class="delete-btn" style="
+                background: none;
+                font-weight: bold;  
+                border: none;
+                outline: none;
+                padding: 0;
+                font: inherit;
+                cursor: pointer;
+                font-size: 75%;  /* 폰트 크기 줄이기 */
+            ">삭제</button>
+        </div>` : '';
+    
+        const deletedMessage = del === 1 ? '삭제된 메시지입니다.' : message;
+
+        // const chatHtml = `
+        //     <div class="chat ${isMine ? 'ch2' : 'ch1'}">
+        //         <div class="message-info">
+        //             <div class="sender">${tierImage}${sender}</div>
+        //             <div class="textbox">${message}</div>
+        //             <div class="extra-info">${formattedTime}</div>
+        //             ${editDeleteButtons}
+        //         </div>
+        //     </div>`;
+
+
+        const chatHtml = `
+        <div class="chat ${isMine ? 'ch2' : 'ch1'}" id="${id}">
+            <div class="message-info">
+                <div class="header" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none !important; border-bottom: none !important;">    
+                    <div class="sender" style="text-decoration: none; border: none;">
+                        ${tierImage}${sender}
+                    </div>
+                </div>
+                <div style="display: flex; align-items: flex-end; ${isMine ? 'justify-content: flex-end;' : 'justify-content: flex-start;'}">
+                    ${isMine && del !== 1 ? `<div class="textbuttons">${editDeleteButtons}</div>` : ''}
+                    <div class="textbox ${del === 1 ? 'deleted-message' : ''}">${deletedMessage}</div>
+                </div>
+                <div class="extra-info">${formattedTime}</div>
+            </div>
+        </div>`;
+    
+    
+
+        // DOM 요소로 변환
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = chatHtml;
+        const chatElement = tempDiv.firstElementChild;
+        let newMsg = null;
+
+        // 내가 작성했고, 삭제되지 않은 댓글인 경우
+        if (isMine == 1 && del != 1) {
+            const buttonContainer = chatElement.querySelector('.chat-buttons');
+
+            chatElement.addEventListener('mouseenter', () => {
+                buttonContainer.style.display = 'block';
+            });
+
+            chatElement.addEventListener('mouseleave', () => {
+                buttonContainer.style.display = 'none';
+            });
+
+
+            // 삭제 버튼 이벤트 추가
+            chatElement.querySelector('.delete-btn').addEventListener('click', () => {
+                this.deleteMessage(id);
+            });
+
+            // 수정 버튼 이벤트 추가
+            chatElement.querySelector('.edit-btn').addEventListener('click', () => {
+                if (newMsg) {
+                    newMsg = this.modifyMessage(id, newMsg);
+                } else {
+                    newMsg = this.modifyMessage(id, message);
+                }
+            });
         }
+
+        return chatElement;  // 기존 코드 유지 위해 HTML 반환
     }
+
+    // 삭제 기능
+    deleteMessage(id) {
+        if (confirm("정말 삭제하시겠습니까? 삭제 이후 추가적인 수정/삭제 작업은 불가능합니다.")) {
+            this.deleteChat(id);
+        }        
+    }
+
+    // 수정 기능
+    modifyMessage(id, oldMessage) {
+        const newMessage = prompt("새로운 메시지를 입력하세요", oldMessage);
+        this.modifyChat(id, newMessage);
+
+        return newMessage;
+    }
+
+
+
 
     // IP 주소를 축약하는 함수 (예: 192.168.1.1 -> 192.168)
     getShortenedIp(ip) {
@@ -379,6 +580,11 @@ class WebSocketManager {
     // 채팅 메시지 전송 함수
     sendChat(message) {
         if (message.trim() === "") return;  // 빈 메시지는 전송하지 않음
+        if (message.length > 150) {
+            alert("메시지는 150자를 초과할 수 없습니다.");  
+            return;  
+        }
+
         const headers = { token: this.token };
         const request = {
             "problemId": this.problemId,
@@ -396,7 +602,7 @@ class WebSocketManager {
 class ChatApp {
     constructor(problemId) {
         this.websocketManager = null;  // WebSocketManager 인스턴스 초기화
-        this.localhost = 'https://bojchat.store';
+        this.domain = 'https://bojchat.store';
         this.token = localStorage.getItem('token'); // localStorage 에서 가져옴
         this.problemId = problemId;
         this.userTier = null;
@@ -406,7 +612,7 @@ class ChatApp {
     async init() {
         try {
             let bojName = this.getUsernameFromDOM();
-            const response = await fetch(this.localhost + '/init', 
+            const response = await fetch(this.domain + '/init', 
                 {
                     method: "GET",
                     headers: { 
@@ -478,16 +684,36 @@ class ChatApp {
     // 채팅 전송 함수
     sendChat() {
         const message = $("#message").val();  // 입력된 메시지 가져오기
-        this.websocketManager.sendChat(message);  // WebSocket을 통해 메시지 전송
+
+        // DOMPurify
+        let sanitizedMessage = DOMPurify.sanitize(message);
+
+        // if (sanitizedMessage.startsWith("https://") || 
+        // sanitizedMessage.startsWith("www.")) {
+        //     sanitizedMessage = this.convertUrlToLink(sanitizedMessage);
+        // }
+        sanitizedMessage = Autolinker.link(sanitizedMessage);
+
+        this.websocketManager.sendChat(sanitizedMessage);  // WebSocket을 통해 메시지 전송
         $("#message").val("");  // 입력 필드 초기화
     }
 
+    // convertUrlToLink(message) {
+    //     const urlRegex = /((https?:\/\/)|(www\.)[^\s]+)/g;
+
+    //     return message.replace(urlRegex, function(url) {
+    //         // www로 시작하는 경우 http://을 자동으로 추가
+    //         if (url.startsWith("www.")) {
+    //             url = "http://" + url;
+    //         }
+    //         // URL을 <a> 태그로 변환
+    //         return `<a href="${url}" target="_blank">${url}</a>`;
+    //     });
+    // }
 
     // 사용자 이름을 DOM에서 추출하는 함수
     getUsernameFromDOM() {
         const usernameElement = document.querySelector('.username'); // 사용자 이름이 있는 a 태그를 선택
-
-        
 
         if (usernameElement) {
             const href = usernameElement.getAttribute('href'); // href 속성 가져오기
@@ -520,7 +746,6 @@ class ChatApp {
 }
 
 $(document).ready(() => {
-
     $('body').append('<button id="chat-button">💬</button>');
 
     $(document).on("click", "#new-message-alert", function () {
@@ -529,7 +754,7 @@ $(document).ready(() => {
     });
 
     // 채팅방 HTML 구조
-    const chatHtml = `
+    const chatHtml = `  
         <div id="chat-app" class="chat-modal" style="display: none;">
             <div class="chat-header">
                 <h3><span id="current-problem">0</span>번 문제를 풀고있는 사람 (<span id="current-user-count">0</span>명)</h3>
@@ -544,7 +769,7 @@ $(document).ready(() => {
             </div>
 
             <form id="chat-form">
-                <input id="message" type="text" placeholder="메시지를 입력하세요" required>
+                <input id="message" type="text" maxlength="150" placeholder="메시지를 입력하세요" required>
                 <button id="send" type="button">전송</button>
             </form>
         </div>
@@ -644,7 +869,7 @@ $(document).ready(() => {
         }
         
 
-        /* 스크롤 바 스타일 (더 깔끔하게) */
+        /* 스크롤 바 스타일 */
         .chat-container::-webkit-scrollbar {
             width: 6px;
         }
@@ -660,16 +885,19 @@ $(document).ready(() => {
 
         /* 메시지 텍스트 박스 */
         .chat .textbox {
+            display: table; 
+            background-color: rgb(231, 231, 231);
             border-radius: 6px !important;
+            padding: 5px 11px;
             font-size: 13px;
-            color: black; /* 글씨 색상을 검은색으로 변경 */
-            word-wrap: break-word; /* 긴 단어가 자동으로 개행되도록 설정 */
-            overflow-wrap: break-word; /* 긴 단어가 자동으로 개행되도록 설정 */
-            max-width: 70%; /* 최대 너비 제한 */
-            white-space: normal; /* 텍스트가 적절히 개행되도록 설정 */
-            word-break: break-word; /* 긴 단어가 텍스트 박스를 넘지 않도록 줄바꿈 처리 */
-            overflow: hidden; /* 넘치는 텍스트는 보이지 않도록 처리 */
+            color: black;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            word-break: break-word;
+            overflow: hidden;
             margin-bottom: 4px;
+            margin-top: 4px;
         }
 
         .chat .message-info {
@@ -688,6 +916,14 @@ $(document).ready(() => {
             font-weight: bold;  /* 글자 굵게 설정 */
         }
 
+        .deleted-message {
+            color: gray !important;  
+            text-align: left;
+            /* white-space: normal 대신 nowrap으로 변경 */
+            white-space: nowrap !important;  
+            font-style: italic;
+        }
+
         .tier-image {
             width: 16px;  /* 아이콘 크기 조절 */
             height: 16px;
@@ -702,25 +938,45 @@ $(document).ready(() => {
             text-align: left;
         }
 
-        /* 오른쪽 정렬 채팅 */
-        .ch2 {
-            justify-content: flex-end; /* 오른쪽 정렬 */
-            text-align: right;
-        }
-
         /* 왼쪽 채팅 박스 */
         .ch1 .textbox {
             margin-left: 0; /* 왼쪽 여백 제거 */
             margin-right: auto; /* 오른쪽으로 밀어내기 */
-            max-width: 65%; /* 왼쪽 채팅 박스 최대 70% */
+            max-width: 75%; /* 왼쪽 채팅 박스 최대 70% */
+        }
+
+
+        /* 오른쪽 정렬 채팅 */
+        .ch2 {
+            display: flex;
+            justify-content: flex-end; /* 오른쪽 정렬 */
+            text-align: right;
+            gap: 10px;  /* 요소 사이의 간격 */
         }
 
         /* 오른쪽 채팅 박스 */
         .ch2 .textbox {
-            margin-left: auto; /* 왼쪽으로 밀어내기 */
-            margin-right: 0; /* 오른쪽 여백 제거 */
-            max-width: 65%; /* 오른쪽 채팅 박스 최대 70% */
+            text-align: left;
+            background-color:rgb(196, 225, 255); /* 본인 메시지 배경색 */
+            max-width: 75%; /* 오른쪽 채팅 박스 최대 70% */
         }
+
+        
+        /* 오른쪽 채팅 박스에서 버튼 위치 */
+        .ch2 .textbuttons {
+            width: 40px;
+            margin-right: 8px;
+            display: flex;
+            align-items: flex-end; /* 버튼이 텍스트의 좌측 하단에 위치하도록 */
+        }
+
+        /* 이미지 크기 조정 */
+        .textbox img {
+            max-width: 100%; /* 채팅 박스를 벗어나지 않도록 이미지 크기 조정 */
+            max-height: 500px; /* 최대 높이를 500px로 설정 (필요에 따라 조정 가능) */
+            object-fit: contain; /* 이미지 비율을 유지하면서 크기 조정 */
+        }
+
 
         /* 사용자 정보 */
         #user-info {
@@ -742,22 +998,28 @@ $(document).ready(() => {
 
         /* 새 메시지 버튼 - 채팅창 내부에 반투명하게 표시 */
         #new-message-alert {
-            position: absolute;  /* 부모 요소인 #user-info 기준으로 고정 */
-            font-size: 12px;     /* 원하는 폰트 크기로 조정 (예: 14px) */
-            bottom: 50px;        /* 채팅창 하단에서 10px 위 */
-            left: 50%;           /* 중앙 정렬 */
-            transform: translateX(-50%); /* X축 중앙 정렬 */
-            background-color: rgba(0, 0, 0, 0.8); /* 반투명 배경 */
+            position: absolute;  
+            font-size: 12px;     
+            bottom: 50px;        
+            left: 50%;           
+            transform: translateX(-50%); 
+            background-color: rgba(59, 59, 59, 0.72); 
             color: white;
             padding: 10px 20px;
             border-radius: 10px !important;
             font-weight: bold;
-            display: none; /* 기본적으로 숨김 */
+            display: none; 
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 10; /* 채팅 메시지 위에 배치 */
+            z-index: 9999; 
+            min-width: 120px;  /* 최소 가로 길이 설정 */
+            max-width: 200px;  /* 최대 가로 길이 설정 */
+            white-space: nowrap;   /* 줄바꿈 방지 */
+            overflow: hidden;      /* 넘치는 글자 숨김 */
+            text-overflow: ellipsis; /* 긴 텍스트 ... 처리 */
         }
+
 
          /* 버튼 클릭 시 살짝 눌리는 효과 */
         #new-message-alert:active {

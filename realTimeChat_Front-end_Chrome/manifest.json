@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BOJ Chat Service",
-  "version": "1.1",
+  "version": "1.2.0",
   "description": "BOJ Real-time chat application using WebSocket.",
   "permissions": ["storage"],
   "content_scripts": [
@@ -11,19 +11,18 @@
         "externalScript/jquery-3.7.1.min.js", 
         "externalScript/sockjs.min.js",  
         "externalScript/stomp.min.js", 
+        "externalScript/purify.min.js", 
+        "externalScript/Autolinker.min.js", 
         "js/chat.js"],
-      "run_at": "document_start"
+      "run_at": "document_end"
     }
   ],
-
-  "web_accessible_resources": [
-    {
-      "resources": ["util/chatUtils.js"],
-      "matches": ["https://www.acmicpc.net/*"]
-    }
-  ],
-
   "icons": {
     "512": "icon128.png"
+  },
+  "content_security_policy": {
+    "script-src": "'self' 'unsafe-inline' https://cdnjs.cloudflare.com; 'wasm-unsafe-eval';",
+    "script-src-elem": "'self' https://cdnjs.cloudflare.com;",
+    "object-src": "'self'"
   }
 }
