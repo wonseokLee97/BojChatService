@@ -6,6 +6,10 @@
 
 <br/><br/>
 
+- 크롬 스토어: https://chromewebstore.google.com/detail/boj-chat-service/foghgmiphkjcablmjnccpaljbiplkfbe?authuser=0&hl=ko
+
+<br><br>
+
 ## 🤔 프로젝트 소개 
 “알고리즘 문제를 풀고 있는 사람들과 실시간으로 소통하면 어떨까?” 
 
@@ -38,19 +42,25 @@
 <img style="margin:0 5px 0 0" src="https://img.shields.io/badge/VScode-007ACC?style=for-the-badge&logo=visualstudio&logoColor=white">
 <img style="margin:0 5px 0 0" src="https://img.shields.io/badge/intelliJ-000000?style=for-the-badge&logo=intellijidea&logoColor=white">
 <img style="margin:0 5px 0 0" src="https://img.shields.io/badge/GIT-F05032?style=for-the-badge&logo=git&logoColor=white">
-<img  style="margin:0 5px 0 0"src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white">
+<img style="margin:0 5px 0 0"src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white">
+<img style="margin:0 5px 0 0" src="https://img.shields.io/badge/AWS EC2-F05032?style=for-the-badge&logo=ec2&logoColor=white">
+<img style="margin:0 5px 0 0" src="https://img.shields.io/badge/Docker-3178c6?style=for-the-badge&logo=Docker&logoColor=white">
 </div>
 
 #### **Development**
 
 <div style='display:flex;margin-bottom:20px'>
 <img style="margin:0 5px 0 0" src="https://img.shields.io/badge/java-007396?style=for-the-badge&logoColor=white">
-<img style="margin:0 5px 0 0" src="https://img.shields.io/badge/javaScript-3178c6?style=for-the-badge&logo=javascript&logoColor=white">
 <img style="margin:0 5px 0 0"src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
 <img style="margin:0 5px 0 0"src="https://img.shields.io/badge/springSecurity-6DB33F?style=for-the-badge&logo=springSecurity&logoColor=white">
 <img style="margin:0 5px 0 0"src="https://img.shields.io/badge/jwt-8000FF?style=for-the-badge&logo=jwt&logoColor=white">
 <img style="margin:0 5px 0 0"src="https://img.shields.io/badge/STOMP/WS-424242?style=for-the-badge&logo=STOMP/WS&logoColor=white">
-<img style="margin:0 5px 0 0"src="https://img.shields.io/badge/JPA-04B431?style=for-the-badge&logo=hibernate&logoColor=white">
+<img style="margin:0 5px 0 0"src="https://img.shields.io/badge/MongoDB-04B431?style=for-the-badge&logo=MongoDB&logoColor=white">
+<img style="margin:0 5px 0 0"src="https://img.shields.io/badge/nginx-6DB33F?style=for-the-badge&logo=nginx&logoColor=white">
+<br>
+<img style="margin:0 5px 0 0" src="https://img.shields.io/badge/javaScript-ffd400?style=for-the-badge&logo=javascript&logoColor=white">
+<img style="margin:0 5px 0 0" src="https://img.shields.io/badge/html-E52917?style=for-the-badge&logo=html&logoColor=white">
+<img style="margin:0 5px 0 0" src="https://img.shields.io/badge/css-3178c6?style=for-the-badge&logo=css&logoColor=white">
 </div>
 
 #### **Comunication**
