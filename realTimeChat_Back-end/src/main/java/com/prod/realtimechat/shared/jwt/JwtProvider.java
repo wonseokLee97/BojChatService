@@ -1,4 +1,4 @@
-package com.dev.realtimechat.shared.jwt;
+package com.prod.realtimechat.shared.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -35,6 +35,8 @@ public class JwtProvider {
     public String generateToken(String ipAddress, String bojName) {
         Instant now = Instant.now();
 
+        log.info("bojName: {}", bojName);
+
         TokenClaims claims = TokenClaims.builder()
                 .id(UUID.randomUUID().toString())
                 .issuer(serverIdentifier)
@@ -45,6 +47,8 @@ public class JwtProvider {
                 .notBefore(now.minusSeconds(600).getEpochSecond())
                 .expiresAt(now.plusSeconds(expirationSeconds).getEpochSecond())
                 .build();
+
+        log.info("claims: {}", claims.toString());
 
 
         return Jwts.builder()
@@ -90,10 +94,11 @@ public class JwtProvider {
                     .parseSignedClaims(token)
                     .getPayload();
 
-//            log.info(serverIdentifier);
-//            log.info(claims.getIssuer());
-//            log.info(claims.getAudience().toString());
-//            log.info(claims.get("bojName", String.class) + ", " + bojName);
+            log.info(ipAddress);
+            log.info(serverIdentifier);
+            log.info(claims.getIssuer());
+            log.info(claims.getAudience().toString());
+            log.info(claims.get("bojName", String.class) + ", " + bojName);
 //            log.info(ipAddress);
             String tokenBojName = claims.get("bojName", String.class);
 
@@ -115,6 +120,8 @@ public class JwtProvider {
             return TokenClaims.builder()
                     .id(claims.getId())
                     .issuer(claims.getIssuer())
+                    .nameTag(claims.getSubject())
+                    .bojName(claims.get("bojName", String.class))
                     .ipAddress(claims.getAudience().iterator().next())
                     .regionCode(claims.getSubject())
                     .issuedAt(claims.getIssuedAt().toInstant().getEpochSecond())

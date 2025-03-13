@@ -1,8 +1,8 @@
-package com.dev.realtimechat.config;
+package com.prod.realtimechat.config;
 
-import com.dev.realtimechat.shared.jwt.JwtAuthenticationFilter;
-import com.dev.realtimechat.shared.jwt.JwtAuthenticationProvider;
-import com.dev.realtimechat.shared.jwt.JwtProvider;
+import com.prod.realtimechat.shared.jwt.JwtAuthenticationFilter;
+import com.prod.realtimechat.shared.jwt.JwtAuthenticationProvider;
+import com.prod.realtimechat.shared.jwt.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,11 +15,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 
 @Configuration

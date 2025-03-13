@@ -1,4 +1,4 @@
-package com.dev.realtimechat.config;
+package com.prod.realtimechat.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ public class CorsConfig {
                 "http://127.0.0.1:5500",
                 "https://www.acmicpc.net"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "bojName", "X-Client-IP"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "bojName", "X-Client-IP", "Content-Type", "token"));
 //        config.setExposedHeaders(Arrays.asList("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

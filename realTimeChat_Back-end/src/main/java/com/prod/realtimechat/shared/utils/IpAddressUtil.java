@@ -1,4 +1,4 @@
-package com.dev.realtimechat.shared.utils;
+package com.prod.realtimechat.shared.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

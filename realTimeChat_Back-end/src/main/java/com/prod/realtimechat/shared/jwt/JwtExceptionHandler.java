@@ -1,7 +1,7 @@
-package com.dev.realtimechat.shared.jwt;
+package com.prod.realtimechat.shared.jwt;
 
-import com.dev.realtimechat.shared.global.api.ApiResponse;
-import com.dev.realtimechat.shared.global.type.http.HttpErrorType;
+import com.prod.realtimechat.shared.global.api.ApiResponse;
+import com.prod.realtimechat.shared.global.type.http.HttpErrorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

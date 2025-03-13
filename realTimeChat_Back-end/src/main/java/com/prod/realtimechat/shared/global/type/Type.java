@@ -1,4 +1,4 @@
-package com.dev.realtimechat.shared.global.type;
+package com.prod.realtimechat.shared.global.type;
 
 public interface Type {
 }

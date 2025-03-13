@@ -1,4 +1,4 @@
-package com.dev.realtimechat.chat.handler;
+package com.prod.realtimechat.chat.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

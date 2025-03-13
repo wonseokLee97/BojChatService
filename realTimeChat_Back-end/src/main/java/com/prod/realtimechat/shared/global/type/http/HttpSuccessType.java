@@ -1,6 +1,6 @@
-package com.dev.realtimechat.shared.global.type.http;
+package com.prod.realtimechat.shared.global.type.http;
 
-import com.dev.realtimechat.shared.global.type.Type;
+import com.prod.realtimechat.shared.global.type.Type;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,7 +16,9 @@ public enum HttpSuccessType implements Type {
     SUCCESS_SIGN_IN(200, "로그인 성공"),
     SUCCESS_LOGOUT(200, "로그아웃 성공"),
     SUCCESS_ROOM_CREATE(201,"채팅방 생성 성공"),
-    SUCCESS_TOKEN_ISSUANCE(201, "토큰 발급 성공");
+    SUCCESS_TOKEN_ISSUANCE(201, "토큰 발급 성공"),
+    SUCCESS_MODIFY_CHAT(200, "채팅 수정 성공"),
+    SUCCESS_DELETE_CHAT(200, "채팅 삭제 성공");
 
     private final int statusCode;
     private final String message;

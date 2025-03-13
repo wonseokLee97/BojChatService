@@ -1,4 +1,4 @@
-package com.dev.realtimechat.shared.global.api;
+package com.prod.realtimechat.shared.global.api;
 
 import lombok.Builder;
 import lombok.Getter;

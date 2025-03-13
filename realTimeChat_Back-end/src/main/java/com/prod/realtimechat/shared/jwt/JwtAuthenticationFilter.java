@@ -1,9 +1,9 @@
-package com.dev.realtimechat.shared.jwt;
+package com.prod.realtimechat.shared.jwt;
 
-import com.dev.realtimechat.shared.global.api.ApiResponse;
-import com.dev.realtimechat.shared.global.type.http.HttpErrorType;
-import com.dev.realtimechat.shared.global.type.http.HttpSuccessType;
-import com.dev.realtimechat.shared.utils.IpAddressUtil;
+import com.prod.realtimechat.shared.global.api.ApiResponse;
+import com.prod.realtimechat.shared.global.type.http.HttpErrorType;
+import com.prod.realtimechat.shared.global.type.http.HttpSuccessType;
+import com.prod.realtimechat.shared.utils.IpAddressUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -68,7 +68,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             JwtAuthenticationToken authRequest = new JwtAuthenticationToken(token, ipAddress, bojName);
             // jwtAuthenticationProvider 로 위임
             Authentication authentication = authenticationManager.authenticate(authRequest);
+            log.info("Authentication 설정됨: {}", authentication);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            log.info(request.toString());
+            log.info(response.toString());
+
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             handleExpiredToken(response, ipAddress, bojName);

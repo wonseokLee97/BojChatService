@@ -1,4 +1,4 @@
-package com.dev.realtimechat.config;
+package com.prod.realtimechat.config;
 
 //@Configuration
 public class MainConfig {

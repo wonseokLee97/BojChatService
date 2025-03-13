@@ -1,10 +1,11 @@
-package com.dev.realtimechat.shared.global.dto;
+package com.prod.realtimechat.shared.global.dto;
 
-import com.dev.realtimechat.chat.domain.Chat;
+import com.prod.realtimechat.chat.domain.Chat;
 import lombok.*;
 
 public class ChatMessageDto {
     public record ChatMessageRequest(String problemId, String message, String userName, String userTier, String nameTag, String ipAddress) {}
+    public record ChatMessageModifyRequest(long id, String message) {}
 
     @Data
     public static class ChatMessageResponse {
@@ -16,10 +17,11 @@ public class ChatMessageDto {
         private final String createdAt;
         private final String ipAddress;
         private final String problemId;
+        private final int del;
 
         // 정적 팩터리 메서드, 도메인 패턴
         @Builder
-        private ChatMessageResponse(long id, String problemId, String message, String userName, String userTier, String nameTag, String createdAt, String ipAddress) {
+        private ChatMessageResponse(long id, String problemId, String message, String userName, String userTier, String nameTag, String createdAt, String ipAddress, int del) {
             this.id = id;
             this.message = message;
             this.userName = userName;
@@ -28,6 +30,7 @@ public class ChatMessageDto {
             this.createdAt = createdAt;
             this.ipAddress = ipAddress;
             this.problemId = problemId;
+            this.del = del;
         }
 
         public static ChatMessageResponse create(Chat chat) {
@@ -40,6 +43,7 @@ public class ChatMessageDto {
                     .createdAt(String.valueOf(chat.getCreatedAt()))
                     .ipAddress(chat.getIpAddress())
                     .problemId(chat.getProblemId())
+                    .del(chat.getDel())
                     .build();
         }
     }

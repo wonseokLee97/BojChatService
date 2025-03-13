@@ -1,4 +1,4 @@
-package com.dev.realtimechat;
+package com.prod.realtimechat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

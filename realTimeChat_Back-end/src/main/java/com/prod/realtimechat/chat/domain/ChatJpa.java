@@ -1,4 +1,4 @@
-package com.dev.realtimechat.chat.domain;
+package com.prod.realtimechat.chat.domain;
 
 //import com.dev.realtimechat.chatroom.domain.ChatRoom;
 //import jakarta.persistence.*;

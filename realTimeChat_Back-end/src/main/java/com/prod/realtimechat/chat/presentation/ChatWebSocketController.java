@@ -1,11 +1,11 @@
-package com.dev.realtimechat.chat.presentation;
+package com.prod.realtimechat.chat.presentation;
 
 
-import com.dev.realtimechat.chat.application.ChatService;
-import com.dev.realtimechat.chat.domain.Chat;
-import com.dev.realtimechat.shared.global.dto.ChatMessageDto;
-import com.dev.realtimechat.shared.jwt.JwtProvider;
-import com.dev.realtimechat.shared.jwt.TokenClaims;
+import com.prod.realtimechat.chat.application.ChatService;
+import com.prod.realtimechat.chat.domain.Chat;
+import com.prod.realtimechat.shared.global.dto.ChatMessageDto;
+import com.prod.realtimechat.shared.jwt.JwtProvider;
+import com.prod.realtimechat.shared.jwt.TokenClaims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.Header;
@@ -36,6 +36,7 @@ public class ChatWebSocketController {
         messagingTemplate.convertAndSend(
                 "/sub/channel/" + chat.getProblemId(),
                 ChatMessageDto.ChatMessageResponse.builder()
+                        .id(chat.getId())
                         .message(chat.getMessage())
                         .userName(chat.getUserName())
                         .userTier(chat.getUserTier())

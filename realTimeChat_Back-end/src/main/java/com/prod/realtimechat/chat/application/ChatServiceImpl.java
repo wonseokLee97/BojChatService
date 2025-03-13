@@ -1,8 +1,9 @@
-package com.dev.realtimechat.chat.application;
+package com.prod.realtimechat.chat.application;
 
-import com.dev.realtimechat.chat.domain.Chat;
-import com.dev.realtimechat.chat.infrastructure.ChatRepository;
-import com.dev.realtimechat.shared.global.dto.ChatMessageDto;
+import com.prod.realtimechat.chat.domain.Chat;
+import com.prod.realtimechat.chat.exception.ChatException;
+import com.prod.realtimechat.chat.infrastructure.ChatRepository;
+import com.prod.realtimechat.shared.global.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,18 +17,44 @@ import java.util.stream.Collectors;
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
+    private final XssSanitizer sanitizer;
 
     @Override
-    public Chat createChat(ChatMessageDto.ChatMessageRequest request, String userName, String nameTag, String ipAddress) {
-        String message = request.message();
+    public Chat createChat(ChatMessageDto.ChatMessageRequest request, String bojName, String nameTag, String ipAddress) {
+        String message = sanitizer.sanitize(request.message());
         String problemId = request.problemId();
         String userTier = request.userTier();
 
-
-        Chat chat = Chat.create(problemId, userName, userTier, nameTag, message, ipAddress);
+        Chat chat = Chat.create(problemId, bojName, userTier, nameTag, message, ipAddress);
         chatRepository.save(chat);
 
         return chat;
+    }
+
+    @Override
+    public Chat modifyChat(ChatMessageDto.ChatMessageModifyRequest request, String bojName) {
+        Long id = request.id();
+        Chat chat = chatRepository.findById(id);
+
+        if (!chat.getUserName().equals(bojName)) {
+            throw new ChatException.UnauthorizedActionException();
+        }
+
+        String message = sanitizer.sanitize(request.message());
+
+        return chatRepository.modify(id, message);
+    }
+
+    @Override
+    public Chat deleteChat(ChatMessageDto.ChatMessageModifyRequest request, String bojName) {
+        Long id = request.id();
+        Chat chat = chatRepository.findById(id);
+
+        if (!chat.getUserName().equals(bojName)) {
+            throw new ChatException.UnauthorizedActionException();
+        }
+
+        return chatRepository.deleteChat(id);
     }
 
     @Override

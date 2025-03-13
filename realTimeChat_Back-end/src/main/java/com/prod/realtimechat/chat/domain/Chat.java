@@ -1,4 +1,4 @@
-package com.dev.realtimechat.chat.domain;
+package com.prod.realtimechat.chat.domain;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -42,6 +42,9 @@ public class Chat {
 
     @Field("created_at")
     private LocalDateTime createdAt;
+
+    @Field("del")
+    private int del;
 
     // 정적 팩터리 메서드, 도메인 패턴
     @Builder

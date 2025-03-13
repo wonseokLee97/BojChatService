@@ -1,4 +1,4 @@
-package com.dev.realtimechat.chat.domain;
+package com.prod.realtimechat.chat.domain;
 
 import lombok.AccessLevel;
 import lombok.Getter;

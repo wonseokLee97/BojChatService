@@ -1,7 +1,7 @@
-package com.dev.realtimechat.chat.config;
+package com.prod.realtimechat.chat.config;
 
-import com.dev.realtimechat.shared.jwt.JwtChannelInterceptor;
-import com.dev.realtimechat.shared.jwt.JwtProvider;
+import com.prod.realtimechat.shared.jwt.JwtChannelInterceptor;
+import com.prod.realtimechat.shared.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;

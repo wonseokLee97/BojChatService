@@ -1,6 +1,6 @@
-package com.dev.realtimechat.chat.infrastructure.springdata.springdatamongo;
+package com.prod.realtimechat.chat.infrastructure.springdata.springdatamongo;
 
-import com.dev.realtimechat.chat.domain.Chat;
+import com.prod.realtimechat.chat.domain.Chat;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 

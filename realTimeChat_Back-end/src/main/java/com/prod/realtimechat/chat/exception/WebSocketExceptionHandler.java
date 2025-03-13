@@ -1,9 +1,8 @@
-package com.dev.realtimechat.chat.handler;
+package com.prod.realtimechat.chat.exception;
 
-import com.dev.realtimechat.shared.global.api.ApiResponse;
-import com.dev.realtimechat.shared.global.type.http.HttpErrorType;
-import com.dev.realtimechat.shared.global.type.ws.WsErrorType;
-import io.jsonwebtoken.ExpiredJwtException;
+import com.prod.realtimechat.shared.global.api.ApiResponse;
+import com.prod.realtimechat.shared.global.type.http.HttpErrorType;
+import com.prod.realtimechat.shared.global.type.ws.WsErrorType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -30,26 +29,14 @@ public class WebSocketExceptionHandler {
                 );
     }
 
-    @MessageExceptionHandler(BadCredentialsException.class)
+    @MessageExceptionHandler(CustomSocketException.MessageLengthExceededException.class)
     @SendToUser(destinations = "/queue/errors", broadcast = false)  // 해당 Session 의 User 에게만 예외 메시지 전송
     protected ApiResponse<?> handleInvalidToken(BadCredentialsException e) {
-        log.error("BadCredentialsException");
+        log.error(e.getMessage());
         return ApiResponse
                 .error(
                         e.getMessage(),
                         HttpErrorType.INVALID_TOKEN,
-                        e.getCause()
-                );
-    }
-
-    @MessageExceptionHandler(ExpiredJwtException.class)
-    @SendToUser(destinations = "/queue/errors", broadcast = false)  // 해당 Session 의 User 에게만 예외 메시지 전송
-    protected ApiResponse<?> handleExpiredToken(ExpiredJwtException e) {
-        log.error("ExpiredJwtException");
-        return ApiResponse
-                .error(
-                        e.getMessage(),
-                        HttpErrorType.EXPIRED_TOKEN,
                         e.getCause()
                 );
     }

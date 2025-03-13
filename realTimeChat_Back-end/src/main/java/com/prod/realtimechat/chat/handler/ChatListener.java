@@ -1,7 +1,7 @@
-package com.dev.realtimechat.chat.handler;
+package com.prod.realtimechat.chat.handler;
 
-import com.dev.realtimechat.chat.application.SequenceGeneratorService;
-import com.dev.realtimechat.chat.domain.Chat;
+import com.prod.realtimechat.chat.application.SequenceGeneratorService;
+import com.prod.realtimechat.chat.domain.Chat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;

@@ -1,4 +1,4 @@
-package com.dev.realtimechat.shared.jwt;
+package com.prod.realtimechat.shared.jwt;
 
 public interface JwtProperties {
     public static final String TOKEN_PREFIX = "Bearer ";

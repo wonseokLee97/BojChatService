@@ -1,4 +1,4 @@
-package com.dev.realtimechat.chat.infrastructure.jpa;
+package com.prod.realtimechat.chat.infrastructure.jpa;
 
 //import com.dev.realtimechat.chat.domain.ChatJpa;
 //import com.dev.realtimechat.chat.infrastructure.ChatRepository;

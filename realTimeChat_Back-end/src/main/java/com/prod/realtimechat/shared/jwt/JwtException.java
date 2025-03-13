@@ -1,4 +1,4 @@
-package com.dev.realtimechat.shared.jwt;
+package com.prod.realtimechat.shared.jwt;
 
 public class JwtException extends RuntimeException {
     public JwtException(String message) {

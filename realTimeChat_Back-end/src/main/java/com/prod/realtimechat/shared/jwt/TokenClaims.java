@@ -1,4 +1,4 @@
-package com.dev.realtimechat.shared.jwt;
+package com.prod.realtimechat.shared.jwt;
 
 import lombok.Builder;
 import lombok.Getter;

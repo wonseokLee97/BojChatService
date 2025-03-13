@@ -1,10 +1,15 @@
-package com.dev.realtimechat.chat.presentation;
+package com.prod.realtimechat.chat.presentation;
 
-import com.dev.realtimechat.chat.application.ChatService;
-import com.dev.realtimechat.shared.global.api.ApiResponse;
-import com.dev.realtimechat.shared.global.type.http.HttpSuccessType;
+import com.prod.realtimechat.chat.application.ChatService;
+import com.prod.realtimechat.chat.domain.Chat;
+import com.prod.realtimechat.shared.global.api.ApiResponse;
+import com.prod.realtimechat.shared.global.dto.ChatMessageDto;
+import com.prod.realtimechat.shared.global.type.http.HttpSuccessType;
+import com.prod.realtimechat.shared.jwt.JwtProvider;
+import com.prod.realtimechat.shared.jwt.TokenClaims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class ChatController {
 
+    private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
+    private final JwtProvider jwtProvider;
 
     // 최초 로딩 (Limit 기반 페이징)
     @GetMapping
@@ -38,5 +45,62 @@ public class ChatController {
         return ApiResponse.success(
                 chatService.getChatListByLastMessageId(problemId, limit, lastMessageId),
                 HttpSuccessType.SUCCESS_GET_CHAT_LIST);
+    }
+
+
+    @PutMapping("/modify")
+    public ApiResponse<?> modifyChat(
+            @RequestBody ChatMessageDto.ChatMessageModifyRequest request,
+            @RequestHeader("token") String token
+    ) {
+        TokenClaims tokenClaims = jwtProvider.getTokenClaims(token);
+
+        Chat chat = chatService.modifyChat(request, tokenClaims.bojName());
+
+        messagingTemplate.convertAndSend(
+                "/sub/channel/modify" + chat.getProblemId(),
+                ChatMessageDto.ChatMessageResponse.builder()
+                        .id(chat.getId())
+                        .message(chat.getMessage())
+                        .userName(chat.getUserName())
+                        .userTier(chat.getUserTier())
+                        .nameTag(chat.getNameTag())
+                        .createdAt(String.valueOf(chat.getCreatedAt()))
+                        .ipAddress(tokenClaims.getIpAddress())
+                        .del(chat.getDel())
+                        .build()
+        );
+
+        return ApiResponse.success(
+                null,
+                HttpSuccessType.SUCCESS_MODIFY_CHAT);
+    }
+
+    @PutMapping("/delete")
+    public ApiResponse<?> deleteChat(
+            @RequestBody ChatMessageDto.ChatMessageModifyRequest request,
+            @RequestHeader("token") String token
+    ) {
+        TokenClaims tokenClaims = jwtProvider.getTokenClaims(token);
+
+        Chat chat = chatService.deleteChat(request, tokenClaims.bojName());
+
+        messagingTemplate.convertAndSend(
+                "/sub/channel/modify" + chat.getProblemId(),
+                ChatMessageDto.ChatMessageResponse.builder()
+                        .id(chat.getId())
+                        .message(chat.getMessage())
+                        .userName(chat.getUserName())
+                        .userTier(chat.getUserTier())
+                        .nameTag(chat.getNameTag())
+                        .createdAt(String.valueOf(chat.getCreatedAt()))
+                        .ipAddress(tokenClaims.getIpAddress())
+                        .del(chat.getDel())
+                        .build()
+        );
+
+        return ApiResponse.success(
+                null,
+                HttpSuccessType.SUCCESS_DELETE_CHAT);
     }
 }

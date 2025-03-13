@@ -1,6 +1,6 @@
-package com.dev.realtimechat.shared.global.type.http;
+package com.prod.realtimechat.shared.global.type.http;
 
-import com.dev.realtimechat.shared.global.type.Type;
+import com.prod.realtimechat.shared.global.type.Type;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

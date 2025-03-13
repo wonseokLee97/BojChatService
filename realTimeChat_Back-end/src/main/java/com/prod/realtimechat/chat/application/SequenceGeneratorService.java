@@ -1,6 +1,6 @@
-package com.dev.realtimechat.chat.application;
+package com.prod.realtimechat.chat.application;
 
-import com.dev.realtimechat.chat.domain.Sequence;
+import com.prod.realtimechat.chat.domain.Sequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;

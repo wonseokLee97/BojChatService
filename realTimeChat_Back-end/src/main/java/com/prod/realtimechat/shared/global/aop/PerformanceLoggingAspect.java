@@ -1,4 +1,4 @@
-package com.dev.realtimechat.shared.global.aop;
+package com.prod.realtimechat.shared.global.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -21,7 +21,7 @@ public class PerformanceLoggingAspect {
      *  - '..'은 하위 패키지를 포함한다는 의미.
      *  - '(..)'은 모든 매개변수 유형을 포함한다는 의미.
      */
-    @Around("execution(* com.dev.realtimechat.chat.presentation..*(..))")
+    @Around("execution(* com.prod.realtimechat.chat.presentation..*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis(); // 실행 시작 시간 기록
 
