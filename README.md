@@ -81,36 +81,37 @@
 ## 📦 주요 기능 
 
 ### (1)
-![image](https://github.com/user-attachments/assets/f0de5181-95ac-4cb5-93ea-8be39850b3e2)
-![image](https://github.com/user-attachments/assets/57c36c39-fe78-450b-abf8-f9bf75aa7d1c)
+![image](https://github.com/user-attachments/assets/12801e47-4c51-4565-b93b-97aed56c0afb)
+![image](https://github.com/user-attachments/assets/63b6dc7c-a925-4110-87a8-d19008303755)
 
 <br>
 
 
 ### (2)
-![image](https://github.com/user-attachments/assets/6a9481da-347d-4a9e-a256-b5b8a72b850c)
-![image](https://github.com/user-attachments/assets/9d0bb43f-afbe-4ba5-bdae-c33e3f9d44fe)
+![image](https://github.com/user-attachments/assets/8172c904-1f73-47be-a996-db3189ec2afe)
+![image](https://github.com/user-attachments/assets/e2cc6fd5-f0ef-41c6-b683-e28066403456)
+![image](https://github.com/user-attachments/assets/f7eb4a0d-81e2-479e-9b13-a246c756c57b)
 
 <br>
 
 ### (3) 
-![image](https://github.com/user-attachments/assets/764844c1-73a9-4372-a711-81337f1b635d)
-![image](https://github.com/user-attachments/assets/b2f999ed-170d-4b7a-8371-a6087be610c3)
+![image](https://github.com/user-attachments/assets/fef49133-8597-48d7-b693-a891b9ca2ded)
+![image](https://github.com/user-attachments/assets/6a4fb2e6-d47f-45bc-b315-c4afe63d2333)
 
 
 
 <br>
 
 ### (4) 
-![image](https://github.com/user-attachments/assets/1f743610-e6a3-4ef2-af22-e501a7253c82)
-![image](https://github.com/user-attachments/assets/221067c6-15f1-456a-a93f-9185a6bc93b0)
+![image](https://github.com/user-attachments/assets/da9dbf89-7bc5-4d8b-af32-d9d053884718)
+![image](https://github.com/user-attachments/assets/aead488f-6445-4348-a1d5-aa50ca1f798f)
 
 
 
 <br>
 
 ### (5) 
-![image](https://github.com/user-attachments/assets/722c472b-9324-466e-95dd-acd5c9742fc1)
+![image](https://github.com/user-attachments/assets/e8ecae3b-08b5-4242-ab18-d85bb002f989)
 
 
 
