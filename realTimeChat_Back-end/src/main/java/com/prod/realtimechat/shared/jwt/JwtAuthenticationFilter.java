@@ -1,8 +1,8 @@
 package com.prod.realtimechat.shared.jwt;
 
-import com.prod.realtimechat.shared.global.api.ApiResponse;
-import com.prod.realtimechat.shared.global.type.http.HttpErrorType;
-import com.prod.realtimechat.shared.global.type.http.HttpSuccessType;
+import com.prod.realtimechat.shared.api.ApiResponse;
+import com.prod.realtimechat.shared.type.http.HttpErrorType;
+import com.prod.realtimechat.shared.type.http.HttpSuccessType;
 import com.prod.realtimechat.shared.utils.IpAddressUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
